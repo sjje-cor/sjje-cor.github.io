@@ -1,0 +1,1701 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>《撿手機文學》</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <style>
+    :root {
+      --rose-1: #fdf2f8;
+      --rose-2: #fce7f3;
+      --rose-3: #f9a8d4;
+      --rose-4: #f472b6;
+      --rose-5: #db2777;
+      --ink: #1f2937;
+      --muted: #64748b;
+      --bg-soft: #f5f3ff;
+      --line-green: #22c55e;
+      --insta: #f97316;
+      --threads: #111827;
+      --panel: rgba(255,255,255,0.88);
+      --shadow: 0 18px 50px rgba(15, 23, 42, 0.16);
+    }
+
+    * { box-sizing: border-box; }
+    html, body { margin: 0; min-height: 100%; }
+    body {
+      font-family: "Segoe UI", "Noto Sans TC", "PingFang TC", sans-serif;
+      background: linear-gradient(180deg, #fff1f6, #f5f3ff 38%, #f6f7fb 100%);
+      color: var(--ink);
+    }
+
+    button, input, textarea {
+      font: inherit;
+    }
+
+    .app-shell {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 18px;
+    }
+
+    .phone-frame {
+      position: relative;
+      width: min(90vw, 390px);
+      height: min(92vh, 820px);
+      border-radius: 34px;
+      overflow: hidden;
+      box-shadow: 0 30px 64px rgba(15, 23, 42, 0.28);
+      border: 10px solid #0f172a;
+      background: #0f172a;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .screen {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #fff;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .status-bar {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 30;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 18px 10px;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      color: white;
+      text-shadow: 0 1px 4px rgba(0,0,0,0.35);
+    }
+
+    .menu-btn {
+      min-width: 42px;
+      min-height: 42px;
+      border-radius: 14px;
+      border: 1px solid rgba(15,23,42,0.06);
+      background: rgba(255,255,255,0.7);
+      color: var(--ink);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+    }
+
+    .card {
+      background: rgba(255,255,255,0.72);
+      border: 1px solid rgba(15,23,42,0.08);
+      box-shadow: 0 10px 18px rgba(15, 23, 42, 0.04);
+      border-radius: 20px;
+      padding: 12px;
+    }
+
+    .badge {
+      position: absolute;
+      top: -6px;
+      right: -6px;
+      min-width: 18px;
+      height: 18px;
+      border-radius: 999px;
+      background: #ef4444;
+      border: 2px solid rgba(255,255,255,0.9);
+      color: white;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 0 4px;
+    }
+
+    .lock-wallpaper {
+      background-size: cover;
+      background-position: center;
+      position: relative;
+    }
+    .lock-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(15,23,42,0.15), rgba(15,23,42,0.7));
+    }
+    .lock-content {
+      position: relative;
+      z-index: 2;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 90px 28px 26px;
+      color: white;
+    }
+
+    .pass-dots {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin-top: 12px;
+    }
+    .pass-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.35);
+      border: 1px solid rgba(255,255,255,0.5);
+    }
+    .pass-dot.filled {
+      background: white;
+    }
+
+    .keypad-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px 16px;
+      margin-top: 18px;
+    }
+    .digit-btn {
+      width: 62px;
+      height: 62px;
+      border-radius: 50%;
+      margin: 0 auto;
+      background: rgba(255,255,255,0.14);
+      color: white;
+      border: 1px solid rgba(255,255,255,0.18);
+      font-size: 1.2rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .digit-btn:active { transform: scale(0.97); background: rgba(255,255,255,0.2); }
+
+    .home-screen {
+      background-size: cover;
+      background-position: center;
+      height: 100%;
+      position: relative;
+      color: white;
+    }
+    .home-screen::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(15,23,42,0.08), rgba(15,23,42,0.48));
+    }
+    .home-content {
+      position: relative;
+      z-index: 2;
+      height: 100%;
+      padding: 72px 16px 18px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .app-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 18px 10px;
+      max-width: 320px;
+      margin: 0 auto;
+      width: 100%;
+    }
+    .app-tile {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      color: white;
+      cursor: pointer;
+      user-select: none;
+      text-decoration: none;
+    }
+    .app-icon {
+      position: relative;
+      width: 54px;
+      height: 54px;
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      box-shadow: 0 12px 20px rgba(15, 23, 42, 0.18);
+      border: 1px solid rgba(255,255,255,0.18);
+    }
+    .dock {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+      background: rgba(255,255,255,0.18);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.18);
+      border-radius: 22px;
+      padding: 10px 12px;
+      max-width: 320px;
+      width: 100%;
+      margin: 0 auto;
+    }
+    .dock-item {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 14px;
+      padding: 10px 0;
+      color: white;
+      position: relative;
+      cursor: pointer;
+      min-height: 50px;
+    }
+
+    .app-panel {
+      flex: 1;
+      overflow-y: auto;
+      padding: 12px 12px 22px;
+      background: linear-gradient(180deg, #fff, #fff5fb);
+    }
+    .screen-app {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      background: #f8fafc;
+      color: var(--ink);
+    }
+    .header-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 16px 10px;
+      background: linear-gradient(180deg, #fff, #f9fafb);
+      border-bottom: 1px solid rgba(15,23,42,0.08);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    .header-title {
+      font-size: 15px;
+      font-weight: 900;
+      letter-spacing: 0.02em;
+    }
+    .list-group { display: flex; flex-direction: column; gap: 10px; }
+    .bubble {
+      max-width: 72%;
+      padding: 10px 12px;
+      border-radius: 16px;
+      font-size: 13px;
+      line-height: 1.5;
+      box-shadow: 0 6px 14px rgba(15,23,42,0.05);
+    }
+    .bubble.them { background: #e5e7eb; color: var(--ink); border-bottom-left-radius: 6px; }
+    .bubble.me { background: linear-gradient(135deg, #4ade80, #10b981); color: white; border-bottom-right-radius: 6px; }
+    .chat-row { display: flex; align-items: flex-end; gap: 8px; margin-bottom: 8px; }
+    .chat-row.me { justify-content: flex-end; }
+    .reply-chip {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 7px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(34,197,94,0.2);
+      background: #ecfdf5;
+      color: #166534;
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .story-strip { display: flex; gap: 12px; overflow-x: auto; padding: 10px 2px 12px; scrollbar-width: none; }
+    .story-strip::-webkit-scrollbar { display: none; }
+    .story-avatar { width: 58px; height: 58px; border-radius: 50%; padding: 2px; background: linear-gradient(135deg, #f9a8d4, #a78bfa); }
+    .story-avatar-inner { width: 100%; height: 100%; border-radius: 50%; background: #fff; padding: 2px; }
+    .story-avatar-inner img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+
+    .feed-post {
+      background: white;
+      border: 1px solid rgba(15,23,42,0.06);
+      border-radius: 22px;
+      overflow: hidden;
+      box-shadow: 0 10px 20px rgba(15,23,42,0.04);
+    }
+    .post-header { display: flex; justify-content: space-between; align-items: center; padding: 12px 14px; }
+    .post-user { display: flex; align-items: center; gap: 10px; }
+    .avatar-mini { width: 36px; height: 36px; border-radius: 50%; object-fit: cover; }
+    .post-image { height: 220px; background: linear-gradient(135deg, #fce7f3, #e9d5ff); }
+    .post-image img { width: 100%; height: 100%; object-fit: cover; }
+    .post-actions { display: flex; justify-content: space-between; align-items: center; padding: 10px 14px 0; }
+    .post-actions .left { display: flex; gap: 16px; font-size: 13px; color: #374151; }
+    .comment-box { padding: 0 14px 14px; }
+    .comment { background: #f9fafb; border-radius: 12px; padding: 8px 10px; font-size: 12px; margin-top: 8px; }
+
+    .notification-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      background: white;
+      border: 1px solid rgba(15,23,42,0.06);
+      border-radius: 16px;
+      padding: 10px;
+    }
+
+    .desktop-viewport {
+      width: min(1100px, 94vw);
+      min-height: min(90vh, 760px);
+      background: rgba(255,255,255,0.82);
+      border: 1px solid rgba(255,255,255,0.7);
+      border-radius: 26px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+    .desktop-topbar {
+      background: rgba(255,255,255,0.9);
+      border-bottom: 1px solid rgba(15,23,42,0.08);
+      padding: 12px 18px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .desktop-window-row {
+      display: flex;
+      flex: 1;
+      gap: 18px;
+      padding: 18px;
+      background: linear-gradient(180deg, #f5f3ff, #fdf2f8);
+    }
+    .desktop-panel {
+      background: rgba(255,255,255,0.76);
+      border: 1px solid rgba(15,23,42,0.08);
+      border-radius: 20px;
+      box-shadow: 0 12px 28px rgba(15,23,42,0.07);
+      padding: 14px;
+      min-width: 260px;
+    }
+    .desktop-taskbar {
+      background: rgba(15,23,42,0.9);
+      color: white;
+      padding: 10px 18px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+    }
+
+    .modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(15,23,42,0.35);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 60;
+    }
+    .modal-card {
+      background: white;
+      width: min(90vw, 420px);
+      border-radius: 18px;
+      padding: 18px;
+      box-shadow: var(--shadow);
+    }
+
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script>
+    const STORAGE_KEY = 'PICKUP_PHONE_GAME_V3';
+    const APP_META = {
+      home: { name: '首頁', icon: 'fa-solid fa-house', color: '#f472b6' },
+      line: { name: 'LINE', icon: 'fa-brands fa-line', color: '#22c55e' },
+      instagram: { name: 'Instagram', icon: 'fa-brands fa-instagram', color: '#f97316' },
+      threads: { name: 'Threads', icon: 'fa-solid fa-at', color: '#0f172a' },
+      phone: { name: '電話', icon: 'fa-solid fa-phone', color: '#f59e0b' },
+      contacts: { name: '聯絡人', icon: 'fa-solid fa-address-book', color: '#60a5fa' },
+      photos: { name: '相簿', icon: 'fa-solid fa-images', color: '#a78bfa' },
+      settings: { name: '設定', icon: 'fa-solid fa-gear', color: '#64748b' },
+      clock: { name: '時鐘', icon: 'fa-solid fa-clock', color: '#14b8a6' },
+      calendar: { name: '行事曆', icon: 'fa-regular fa-calendar-days', color: '#fb7185' },
+      notes: { name: '備忘錄', icon: 'fa-regular fa-note-sticky', color: '#fbbf24' },
+      calculator: { name: '計算機', icon: 'fa-solid fa-calculator', color: '#10b981' },
+      search: { name: '搜尋', icon: 'fa-solid fa-magnifying-glass', color: '#8b5cf6' },
+      browser: { name: '瀏覽器', icon: 'fa-solid fa-globe', color: '#3b82f6' },
+      notifications: { name: '通知中心', icon: 'fa-solid fa-bell', color: '#ef4444' },
+    };
+
+    const avatarSVG = {
+      unus: createAvatarSvg('UN', '#f9a8d4', '#fff', '#be185d'),
+      gao: createAvatarSvg('高', '#fbcfe8', '#fff', '#9d174d'),
+      seanko: createAvatarSvg('翔', '#dbeafe', '#fff', '#1d4ed8'),
+      yuting: createAvatarSvg('廷', '#ddd6fe', '#fff', '#6d28d9'),
+      cy: createAvatarSvg('祐', '#dcfce7', '#fff', '#166534'),
+      fan1: createAvatarSvg('A', '#fee2e2', '#fff', '#b91c1c'),
+      fan2: createAvatarSvg('B', '#ede9fe', '#fff', '#6d28d9'),
+      fan3: createAvatarSvg('C', '#d1fae5', '#fff', '#065f46'),
+      fan4: createAvatarSvg('D', '#fef3c7', '#fff', '#92400e'),
+      fan5: createAvatarSvg('E', '#dbeafe', '#fff', '#1d4ed8')
+    };
+
+    const CHARACTERS = {
+      cy: {
+        id: 'cy',
+        name: '蔡承祐',
+        handle: '@4.10_cy',
+        code: '0410',
+        avatar: avatarSVG.cy,
+        wallpaper: 'https://images.unsplash.com/photo-1516280440614-37939bbacd81?auto=format&fit=crop&w=900&q=80',
+        personality: '熱情、黏人、會撒嬌、會吃醋，私下表達情緒很直接。',
+        publicImage: 'UNUS 成員，舞台與舞蹈表現強，常分享生活與練習。',
+        privateStyle: '一旦真的在乎就會很細心，愛黏人也會不自覺地想抱著你。',
+        relationship: '玩家是秘密戀人，公開上維持平常朋友感，私底下親密。',
+        knownInfo: '他知道玩家有秘密交往關係，會偷偷關心你。',
+      },
+      yt: {
+        id: 'yt',
+        name: '吳昱廷',
+        handle: '@yut1ng_530',
+        code: '0530',
+        avatar: avatarSVG.yuting,
+        wallpaper: 'https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=900&q=80',
+        personality: '感性、浪漫、細心、善於安撫人。',
+        publicImage: '音樂與創作型人物，社群上常分享心情與創作。',
+        privateStyle: '私下會在夜晚聊深刻的話，會記住你說過的每個小細節。',
+        relationship: '玩家是秘密戀人，關係柔軟而真誠。',
+        knownInfo: '他知道玩家有時候會想藏起來的一面，用音樂和回憶安撫你。',
+      },
+      gw: {
+        id: 'gw',
+        name: '高胥崴',
+        handle: '@gao__guei',
+        code: '0217',
+        avatar: avatarSVG.gao,
+        wallpaper: 'https://images.unsplash.com/photo-1461784121038-f088ca1e7714?auto=format&fit=crop&w=900&q=80',
+        personality: '成熟可靠、照顧型、話不多但很穩。',
+        publicImage: 'UNUS 維持大哥哥形象，處事穩、會照顧團員。',
+        privateStyle: '私下會在你累時提醒你吃飯、休息，對你有強烈保護欲。',
+        relationship: '玩家是秘密戀人，公開上仍是朋友，私下非常體貼。',
+        knownInfo: '他知道你有些在意的東西，但會先在乎你的情緒。',
+      },
+      yh: {
+        id: 'yh',
+        name: '高有翔',
+        handle: '@seanko61',
+        code: '0601',
+        avatar: avatarSVG.seanko,
+        wallpaper: 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=900&q=80',
+        personality: '酷、氣氛感強，觀察細、會默默留意你。',
+        publicImage: '專注於照相、穿搭與生活氛圍，拍照風格很有故事感。',
+        privateStyle: '會不動聲色地關心你，喜歡在安靜時分享一些不想公開的事情。',
+        relationship: '玩家是秘密戀人，私下容易有默契與貼近感。',
+        knownInfo: '他知道玩家偏好安靜並不想太多曝光的相處方式。',
+      }
+    };
+
+    const DEFAULT_STATE = () => ({
+      playerName: '',
+      selectedCharId: null,
+      deviceMode: 'phone',
+      unlocked: false,
+      currentApp: 'home',
+      notifications: [],
+      fanAccounts: [],
+      lineChats: {},
+      instagramPosts: [],
+      threadsPosts: [],
+      notes: [
+        '今晚要問一下約定時間',
+        '整理那張相片的備份',
+      ],
+      calendar: [
+        { id: 'evt-1', title: '練團', date: '2026-10-24', time: '18:00', note: '舞台彩排' },
+        { id: 'evt-2', title: '晚餐約定', date: '2026-10-25', time: '19:30', note: '待確認' },
+      ],
+      events: [],
+      memories: {
+        questionsAsked: [],
+        topics: [],
+        completedEvents: [],
+        pendingEvents: [],
+        choices: {}
+      },
+      unreadNotifications: 0,
+      appStates: {}
+    });
+
+    function createAvatarSvg(letter, bg1, bg2, accent) {
+      const svg = `
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" role="img" aria-label="avatar">
+          <defs>
+            <linearGradient id="g" x1="0" x2="1" y1="0" y2="1">
+              <stop offset="0%" stop-color="${bg1}" />
+              <stop offset="100%" stop-color="${bg2}" />
+            </linearGradient>
+          </defs>
+          <rect width="120" height="120" rx="60" fill="url(#g)"/>
+          <circle cx="60" cy="46" r="21" fill="rgba(255,255,255,0.84)"/>
+          <path d="M28 96c8-18 20-28 32-28s24 10 32 28" fill="rgba(255,255,255,0.78)"/>
+          <circle cx="60" cy="60" r="48" fill="none" stroke="${accent}" stroke-opacity="0.22" stroke-width="5"/>
+          <text x="60" y="66" text-anchor="middle" font-size="26" font-weight="700" fill="${accent}" font-family="Segoe UI, sans-serif">${letter}</text>
+        </svg>
+      `;
+      return 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(svg);
+    }
+
+    function loadState() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) return DEFAULT_STATE();
+        const parsed = JSON.parse(raw);
+        return { ...DEFAULT_STATE(), ...parsed, memories: { ...DEFAULT_STATE().memories, ...(parsed.memories || {}) } };
+      } catch (e) {
+        return DEFAULT_STATE();
+      }
+    }
+
+    let state = loadState();
+
+    function saveState() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    }
+
+    function escapeHtml(str) {
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    function formatTime(date = new Date()) {
+      return `${String(date.getHours()).padStart(2,'0')}:${String(date.getMinutes()).padStart(2,'0')}`;
+    }
+
+    function parseDateText(date = new Date()) {
+      const weeks = ['日','一','二','三','四','五','六'];
+      return `${date.getFullYear()}/${String(date.getMonth()+1).padStart(2,'0')}/${String(date.getDate()).padStart(2,'0')} 週${weeks[date.getDay()]}`;
+    }
+
+    function getSelectedCharacter() {
+      return state.selectedCharId ? CHARACTERS[state.selectedCharId] : null;
+    }
+
+    function getAppColor(appId) {
+      return APP_META[appId]?.color || '#f472b6';
+    }
+
+    function addNotification({ title, text, app = 'notifications', type = 'info' }) {
+      const note = {
+        id: `n-${Date.now()}-${Math.random().toString(16).slice(2)}`,
+        title,
+        text,
+        app,
+        read: false,
+        createdAt: new Date().toISOString(),
+        type,
+      };
+      state.notifications = [note, ...state.notifications];
+      state.unreadNotifications = state.notifications.filter(n => !n.read).length;
+      saveState();
+      return note;
+    }
+
+    function markRead(id) {
+      state.notifications = state.notifications.map(n => n.id === id ? { ...n, read: true } : n);
+      state.unreadNotifications = state.notifications.filter(n => !n.read).length;
+      saveState();
+    }
+
+    function ensureSeedData() {
+      const selected = getSelectedCharacter();
+      if (!selected) return;
+
+      if (!state.lineChats[selected.id]) {
+        state.lineChats[selected.id] = [
+          { id: 'seed-1', sender: 'them', text: '你今天有空嗎？我想知道你現在在做什麼。', time: '21:14' },
+          { id: 'seed-2', sender: 'me', text: '現在有點空，剛剛從事情忙完。', time: '21:16' },
+          { id: 'seed-3', sender: 'them', text: '那稍後可以一起出去散步嗎？我想跟你聊聊。', time: '21:17' }
+        ];
+      }
+
+      if (state.fanAccounts.length === 0) {
+        state.fanAccounts = [
+          { id: 'fan1', username: 'bean_lover', displayName: '花生控', avatar: avatarSVG.fan1, intro: '活躍留言型粉絲', followers: 1520, following: 190, tag: '普通粉絲' },
+          { id: 'fan2', username: 'moonlight_n', displayName: '月光觀察者', avatar: avatarSVG.fan2, intro: '喜歡分析每個細節', followers: 2280, following: 260, tag: '分析型' },
+          { id: 'fan3', username: 'snapshots_88', displayName: '邊走邊拍', avatar: avatarSVG.fan3, intro: '喜歡分享照片與活動', followers: 3800, following: 340, tag: '活動追蹤型' },
+          { id: 'fan4', username: 'lolcats', displayName: '吐槽怪咖', avatar: avatarSVG.fan4, intro: '會在留言裡放笑話', followers: 980, following: 120, tag: '幽默吐槽型' },
+          { id: 'fan5', username: 'quietread', displayName: '潛水觀眾', avatar: avatarSVG.fan5, intro: '很少發話但會默默按讚', followers: 610, following: 80, tag: '潛水型' },
+        ];
+      }
+
+      if (state.instagramPosts.length === 0) {
+        state.instagramPosts = [
+          {
+            id: 'ig-1',
+            account: selected.handle,
+            accountName: selected.name,
+            avatar: selected.avatar,
+            image: selected.wallpaper,
+            caption: '今天街角的光線太好，不知道要不要把這份心情留成一張照片。',
+            time: '2 小時前',
+            liked: false,
+            collected: false,
+            likes: 1284,
+            comments: 42,
+            commentsList: [
+              { id: 'c1', user: 'moonlight_n', text: '光線真的很好，像是某個關鍵時刻。', avatar: avatarSVG.fan2 },
+              { id: 'c2', user: 'bean_lover', text: '這照片太舒服了，像是偷拍了某個秘密故事。', avatar: avatarSVG.fan1 },
+            ],
+            unread: false
+          },
+          {
+            id: 'ig-2',
+            account: '@unus__official',
+            accountName: 'UNUS 官方',
+            avatar: avatarSVG.unus,
+            image: 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=900&q=80',
+            caption: '彩排後的片刻安靜，最容易讓人想起一切。',
+            time: '5 小時前',
+            liked: false,
+            collected: false,
+            likes: 4021,
+            comments: 87,
+            commentsList: [
+              { id: 'c3', user: 'snapshots_88', text: '這張有種安靜的力量。', avatar: avatarSVG.fan3 },
+            ],
+            unread: false
+          }
+        ];
+      }
+
+      if (state.threadsPosts.length === 0) {
+        state.threadsPosts = [
+          {
+            id: 'th-1',
+            account: selected.handle,
+            accountName: selected.name,
+            avatar: selected.avatar,
+            content: '今天很想把日常慢下來一點，連雨聲都像在說一些藏起來的事。',
+            time: '今天 09:12',
+            liked: false,
+            boosted: false,
+            replies: [
+              { id: 'r1', user: 'moonlight_n', text: '說得很像你會記住的某個角度。', avatar: avatarSVG.fan2 },
+            ],
+          },
+          {
+            id: 'th-2',
+            account: '@unus__official',
+            accountName: 'UNUS 官方',
+            avatar: avatarSVG.unus,
+            content: '彩排結束後，大家都睡得有點晚，心裡卻很安靜。',
+            time: '昨天 21:20',
+            liked: false,
+            boosted: false,
+            replies: [
+              { id: 'r2', user: 'bean_lover', text: '這種話題非常適合放在日記裡。', avatar: avatarSVG.fan1 },
+            ],
+          }
+        ];
+      }
+
+      if (!state.notifications.length) {
+        addNotification({ title: '系統啟動', text: `${selected.name} 的手機已成功登入。`, app: 'home', type: 'system' });
+      }
+    }
+
+    function resetGame() {
+      if (!confirm('確定要清除所有遊戲資料嗎？這將會清除已保存的玩家姓名、角色選擇、聊天紀錄、通知與事件進度。')) return;
+      localStorage.removeItem(STORAGE_KEY);
+      state = DEFAULT_STATE();
+      renderRoot();
+    }
+
+    function renderRoot() {
+      const root = document.getElementById('root');
+      if (!root) return;
+
+      const selected = getSelectedCharacter();
+      if (!state.playerName || !selected) {
+        root.innerHTML = renderSetupScreen();
+        bindSetupEvents();
+        return;
+      }
+
+      if (!state.unlocked) {
+        root.innerHTML = renderLockScreen();
+        bindLockEvents();
+        return;
+      }
+
+      if (state.deviceMode === 'phone') {
+        root.innerHTML = renderPhoneScreen();
+        bindPhoneEvents();
+      } else {
+        root.innerHTML = renderDesktopScreen();
+        bindDesktopEvents();
+      }
+    }
+
+    function renderSetupScreen() {
+      const selected = state.selectedCharId || 'cy';
+      return `
+        <div class="app-shell">
+          <div class="w-full max-w-5xl bg-white/80 border border-white/70 rounded-[28px] shadow-[var(--shadow)] p-4 md:p-6 backdrop-blur-xl">
+            <div class="grid md:grid-cols-2 gap-5">
+              <div class="rounded-[24px] bg-gradient-to-br from-pink-100 via-white to-violet-100 p-6">
+                <div class="inline-block px-3 py-1 rounded-full bg-pink-100 text-pink-700 text-[11px] font-bold tracking-[0.2em]">GAME START</div>
+                <h1 class="mt-4 text-3xl md:text-4xl font-black text-slate-900">《撿手機文學》</h1>
+                <p class="mt-3 text-sm text-slate-600">玩家將進入自己選定角色的手機，閱讀秘密聊天、查看公開貼文、追查事件與留意粉絲互動。</p>
+
+                <div class="mt-5">
+                  <div class="text-sm font-bold mb-2 text-slate-700">1. 裝置模式</div>
+                  <div class="grid grid-cols-2 gap-2">
+                    <button class="mode-btn ${state.deviceMode === 'phone' ? 'bg-rose-500 text-white' : 'bg-white text-slate-700'} border border-slate-200 rounded-2xl px-3 py-3 font-bold" data-mode="phone">
+                      <i class="fa-solid fa-mobile-screen-button mr-2"></i>手機模式
+                    </button>
+                    <button class="mode-btn ${state.deviceMode === 'desktop' ? 'bg-rose-500 text-white' : 'bg-white text-slate-700'} border border-slate-200 rounded-2xl px-3 py-3 font-bold" data-mode="desktop">
+                      <i class="fa-solid fa-desktop mr-2"></i>電腦模式
+                    </button>
+                  </div>
+                </div>
+
+                <div class="mt-5">
+                  <label class="block text-sm font-bold mb-2 text-slate-700">2. 玩家姓名</label>
+                  <input id="player-name-input" value="${escapeHtml(state.playerName || '')}" class="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-slate-800" placeholder="輸入你的遊戲姓名" />
+                </div>
+              </div>
+
+              <div class="rounded-[24px] bg-slate-50 p-5">
+                <div class="text-lg font-black text-slate-900">3. 選擇秘密戀人</div>
+                <div class="mt-4 grid grid-cols-2 gap-3">
+                  ${Object.values(CHARACTERS).map((char) => `
+                    <div class="char-card ${selected === char.id ? 'bg-pink-50 ring-2 ring-pink-300' : 'bg-white'} rounded-2xl border border-slate-200 p-3 cursor-pointer" data-char="${char.id}">
+                      <div class="flex items-center gap-3">
+                        <img src="${char.avatar}" alt="${char.name}" class="w-12 h-12 rounded-full object-cover border border-slate-200" />
+                        <div class="min-w-0">
+                          <div class="font-bold text-sm text-slate-900">${char.name}</div>
+                          <div class="text-[11px] text-slate-500">${char.handle}</div>
+                        </div>
+                      </div>
+                    </div>
+                  `).join('')}
+                </div>
+
+                <button id="start-game-btn" class="mt-5 w-full rounded-2xl bg-gradient-to-r from-pink-500 to-rose-500 text-white font-bold py-3 shadow-lg hover:brightness-105">進入遊戲</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function bindSetupEvents() {
+      document.querySelectorAll('.mode-btn').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          state.deviceMode = btn.dataset.mode;
+          saveState();
+          renderRoot();
+        });
+      });
+
+      document.querySelectorAll('.char-card').forEach((card) => {
+        card.addEventListener('click', () => {
+          state.selectedCharId = card.dataset.char;
+          renderRoot();
+        });
+      });
+
+      document.getElementById('start-game-btn')?.addEventListener('click', () => {
+        const input = document.getElementById('player-name-input');
+        const name = (input?.value || '').trim();
+        if (!name) {
+          alert('請輸入你的遊戲姓名');
+          return;
+        }
+        if (!state.selectedCharId) {
+          alert('請選擇一位角色');
+          return;
+        }
+        state.playerName = name;
+        state.unlocked = false;
+        state.currentApp = 'home';
+        ensureSeedData();
+        saveState();
+        renderRoot();
+      });
+    }
+
+    function renderLockScreen() {
+      const char = getSelectedCharacter();
+      const dateText = parseDateText();
+      return `
+        <div class="app-shell">
+          <div class="phone-frame">
+            <div class="screen lock-wallpaper" style="background-image:url('${char.wallpaper}')">
+              <div class="status-bar">
+                <span>${formatTime()}</span>
+                <div class="flex items-center gap-3 text-xs">
+                  <span>${dateText.split(' ')[1]}</span>
+                  <i class="fa-solid fa-signal"></i>
+                  <i class="fa-solid fa-wifi"></i>
+                  <i class="fa-solid fa-battery-full"></i>
+                </div>
+              </div>
+              <div class="lock-overlay"></div>
+              <div class="lock-content">
+                <div class="text-center">
+                  <div class="inline-flex rounded-full border border-white/25 bg-white/10 px-3 py-1 text-[10px] tracking-[0.22em] text-white/80">LOCKED</div>
+                  <div class="mt-4 text-5xl font-light tracking-wide text-white">${formatTime()}</div>
+                  <div class="mt-3 text-sm text-white/80">${dateText}</div>
+                  <div class="mt-4 inline-block rounded-full border border-white/15 bg-white/8 px-3 py-2 text-[11px] text-white/90">未讀訊息 ${state.unreadNotifications || 3}</div>
+                </div>
+
+                <div class="mx-auto w-full max-w-[265px]">
+                  <div class="text-center text-xs text-white/85">輸入密碼以解鎖 ${char.name} 的手機</div>
+                  <div class="pass-dots" id="lock-dots"></div>
+                  <div id="lock-error" class="mt-2 text-center text-[11px] text-rose-200 opacity-0 transition">密碼錯誤，請再試一次。</div>
+                  <div class="keypad-grid">
+                    ${[1,2,3,4,5,6,7,8,9,'C',0,'DEL'].map((key) => `
+                      <button class="digit-btn" data-key="${key}">${key === 'DEL' ? '<i class="fa-solid fa-delete-left"></i>' : key}</button>
+                    `).join('')}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function bindLockEvents() {
+      let input = '';
+      const dotsEl = document.getElementById('lock-dots');
+      const errEl = document.getElementById('lock-error');
+      const char = getSelectedCharacter();
+
+      const refreshDots = () => {
+        if (!dotsEl) return;
+        dotsEl.innerHTML = Array.from({ length: 4 }).map((_, i) => `
+          <span class="pass-dot ${i < input.length ? 'filled' : ''}"></span>
+        `).join('');
+      };
+
+      document.querySelectorAll('.digit-btn').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const key = String(btn.dataset.key);
+          if (key === 'C') {
+            input = '';
+            refreshDots();
+            return;
+          }
+          if (key === 'DEL') {
+            input = input.slice(0, -1);
+            refreshDots();
+            return;
+          }
+          if (input.length < 4) {
+            input += key;
+            refreshDots();
+            if (input.length === 4) {
+              if (input === char.code) {
+                state.unlocked = true;
+                addNotification({ title: '已解鎖', text: `成功進入 ${char.name} 的手機。`, app: 'home', type: 'success' });
+                saveState();
+                renderRoot();
+              } else {
+                if (errEl) {
+                  errEl.classList.remove('opacity-0');
+                  setTimeout(() => errEl.classList.add('opacity-0'), 1500);
+                }
+                input = '';
+                setTimeout(refreshDots, 300);
+              }
+            }
+          }
+        });
+      });
+      refreshDots();
+    }
+
+    function renderPhoneScreen() {
+      return `
+        <div class="app-shell">
+          <div class="phone-frame">
+            <div class="screen">
+              <div class="status-bar bg-slate-900/40">
+                <span>${formatTime()}</span>
+                <div class="flex items-center gap-2">
+                  <i class="fa-solid fa-signal"></i>
+                  <i class="fa-solid fa-wifi"></i>
+                  <i class="fa-solid fa-battery-full"></i>
+                </div>
+              </div>
+              ${renderCurrentAppContent()}
+              ${state.currentApp !== 'home' ? `
+                <div class="absolute bottom-2 left-1/2 -translate-x-1/2 z-40">
+                  <button id="go-home-btn" class="w-32 h-1.5 bg-slate-800/60 rounded-full hover:bg-slate-800 transition"></button>
+                </div>
+              ` : ''}
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function bindPhoneEvents() {
+      bindCommonAppEvents();
+    }
+
+    function renderDesktopScreen() {
+      return `
+        <div class="app-shell">
+          <div class="desktop-viewport">
+            <div class="desktop-topbar">
+              <div class="flex items-center gap-3">
+                <span class="font-black text-rose-600">《撿手機文學》電腦模式</span>
+                <span class="text-xs text-slate-500">玩家: ${escapeHtml(state.playerName)} | 角色: ${getSelectedCharacter().name}</span>
+              </div>
+              <div class="flex items-center gap-2">
+                <button class="mode-switch-btn px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-xs font-bold" data-mode="phone">切換手機模式</button>
+                <button class="reset-global-btn px-3 py-1.5 rounded-xl bg-rose-50 hover:bg-rose-100 text-xs font-bold text-rose-600">重置遊戲</button>
+              </div>
+            </div>
+            <div class="desktop-window-row">
+              <div class="desktop-panel w-72 flex flex-col gap-3">
+                <div class="text-xs font-bold text-slate-400 px-1">快速導覽</div>
+                <div class="grid grid-cols-2 gap-2">
+                  ${Object.entries(APP_META).map(([id, m]) => `
+                    <button class="desktop-nav-btn flex items-center gap-2 p-2.5 rounded-xl text-left bg-white/70 hover:bg-white border border-slate-200 text-xs font-bold transition" data-app="${id}">
+                      <span class="w-6 h-6 rounded-lg flex items-center justify-center text-white text-xs" style="background:${m.color}"><i class="${m.icon}"></i></span>
+                      <span class="truncate">${m.name}</span>
+                    </button>
+                  `).join('')}
+                </div>
+              </div>
+              <div class="desktop-panel flex-1 flex flex-col bg-white overflow-hidden p-0">
+                <div class="flex items-center justify-between px-4 py-3 bg-slate-50 border-b border-slate-200">
+                  <div class="flex items-center gap-2 font-bold text-sm">
+                    <span class="w-3 h-3 rounded-full" style="background:${getAppColor(state.currentApp)}"></span>
+                    <span>${APP_META[state.currentApp]?.name || 'App'}</span>
+                  </div>
+                  ${state.currentApp !== 'home' ? `
+                    <button class="back-home-desktop text-xs font-bold text-slate-500 hover:text-slate-800"><i class="fa-solid fa-house mr-1"></i>返回桌面</button>
+                  ` : ''}
+                </div>
+                <div class="flex-1 overflow-y-auto relative">
+                  ${renderCurrentAppContent()}
+                </div>
+              </div>
+            </div>
+            <div class="desktop-taskbar">
+              <span>撿手機文學 - 自由探索中</span>
+              <span>${formatTime()}</span>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function bindDesktopEvents() {
+      document.querySelectorAll('.mode-switch-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          state.deviceMode = btn.dataset.mode;
+          saveState();
+          renderRoot();
+        });
+      });
+      document.querySelectorAll('.reset-global-btn').forEach(btn => {
+        btn.addEventListener('click', resetGame);
+      });
+      document.querySelectorAll('.desktop-nav-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          state.currentApp = btn.dataset.app;
+          saveState();
+          renderRoot();
+        });
+      });
+      document.querySelector('.back-home-desktop')?.addEventListener('click', () => {
+        state.currentApp = 'home';
+        saveState();
+        renderRoot();
+      });
+      bindCommonAppEvents();
+    }
+
+    function renderCurrentAppContent() {
+      switch (state.currentApp) {
+        case 'home': return renderHomeScreen();
+        case 'line': return renderLineApp();
+        case 'instagram': return renderInstagramApp();
+        case 'threads': return renderThreadsApp();
+        case 'phone': return renderPhoneApp();
+        case 'contacts': return renderContactsApp();
+        case 'photos': return renderPhotosApp();
+        case 'settings': return renderSettingsApp();
+        case 'clock': return renderClockApp();
+        case 'calendar': return renderCalendarApp();
+        case 'notes': return renderNotesApp();
+        case 'calculator': return renderCalculatorApp();
+        case 'search': return renderSearchApp();
+        case 'browser': return renderBrowserApp();
+        case 'notifications': return renderNotificationsApp();
+        default: return renderHomeScreen();
+      }
+    }
+
+    function bindCommonAppEvents() {
+      document.getElementById('go-home-btn')?.addEventListener('click', () => {
+        state.currentApp = 'home';
+        saveState();
+        renderRoot();
+      });
+
+      document.querySelectorAll('.app-tile').forEach(tile => {
+        tile.addEventListener('click', () => {
+          const appId = tile.dataset.app;
+          state.currentApp = appId;
+          saveState();
+          renderRoot();
+        });
+      });
+
+      bindAppSpecificEvents();
+    }
+
+    function renderHomeScreen() {
+      const char = getSelectedCharacter();
+      const apps = Object.keys(APP_META).filter(k => k !== 'home');
+      return `
+        <div class="home-screen" style="background-image:url('${char.wallpaper}')">
+          <div class="home-content">
+            <div class="pt-6 text-center">
+              <div class="text-xs text-white/80 font-medium">${parseDateText()}</div>
+              <div class="text-3xl font-light text-white tracking-wide mt-1">${formatTime()}</div>
+              <div class="mt-2 inline-block px-3 py-1 rounded-full bg-black/30 backdrop-blur text-xs text-white font-bold">目前戀人：${char.name}</div>
+            </div>
+
+            <div class="app-grid">
+              ${apps.map(id => {
+                const meta = APP_META[id];
+                const badgeCount = id === 'notifications' ? state.unreadNotifications : 0;
+                return `
+                  <div class="app-tile" data-app="${id}">
+                    <div class="app-icon" style="background: ${meta.color}">
+                      <i class="${meta.icon}"></i>
+                      ${badgeCount > 0 ? `<span class="badge">${badgeCount}</span>` : ''}
+                    </div>
+                    <span class="text-[11px] font-medium tracking-tight text-white drop-shadow">${meta.name}</span>
+                  </div>
+                `;
+              }).join('')}
+            </div>
+
+            <div class="dock">
+              ${['line', 'instagram', 'threads', 'phone'].map(id => {
+                const meta = APP_META[id];
+                return `
+                  <div class="dock-item app-tile" data-app="${id}" style="background: ${meta.color}22">
+                    <i class="${meta.icon} text-xl" style="color: ${meta.color}"></i>
+                  </div>
+                `;
+              }).join('')}
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderLineApp() {
+      const char = getSelectedCharacter();
+      const chats = state.lineChats[char.id] || [];
+      return `
+        <div class="screen-app">
+          <div class="header-bar">
+            <button class="menu-btn back-home"><i class="fa-solid fa-chevron-left"></i></button>
+            <div class="header-title flex items-center gap-2">
+              <img src="${char.avatar}" class="w-7 h-7 rounded-full object-cover" />
+              <span>${char.name}</span>
+            </div>
+            <div class="w-10"></div>
+          </div>
+          <div class="app-panel flex-1 flex flex-col justify-between">
+            <div class="space-y-3 overflow-y-auto pr-1" id="line-chat-box">
+              <div class="text-center text-[11px] text-slate-400 my-2">你們正在秘密交往中。切勿在公開場合外流對話。</div>
+              ${chats.map(msg => `
+                <div class="chat-row ${msg.sender === 'me' ? 'me' : ''}">
+                  ${msg.sender !== 'me' ? `<img src="${char.avatar}" class="w-8 h-8 rounded-full object-cover mb-1" />` : ''}
+                  <div class="bubble ${msg.sender === 'me' ? 'me' : 'them'}">
+                    ${escapeHtml(msg.text)}
+                    <div class="text-[9px] mt-1 text-right opacity-70">${msg.time}</div>
+                  </div>
+                </div>
+              `).join('')}
+            </div>
+
+            <div class="mt-3 pt-2 border-t border-slate-200">
+              <div class="flex gap-2 overflow-x-auto pb-2 scrollbar-none">
+                <button class="reply-chip quick-reply" data-text="你今天過得還好嗎？">你今天過得還好嗎？</button>
+                <button class="reply-chip quick-reply" data-text="等下要不要偷偷見面？">等下要不要偷偷見面？</button>
+                <button class="reply-chip quick-reply" data-text="我有看到你發的限時動態喔！">我有看到你發的限時動態喔！</button>
+              </div>
+              <div class="flex gap-2 mt-1">
+                <input id="line-input" class="flex-1 rounded-2xl border border-slate-200 bg-white px-4 py-2.5 text-xs" placeholder="傳送 LINE 訊息..." />
+                <button id="line-send" class="rounded-2xl bg-emerald-500 text-white px-4 py-2 text-xs font-bold hover:bg-emerald-600"><i class="fa-solid fa-paper-plane"></i></button>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderInstagramApp() {
+      const posts = state.instagramPosts || [];
+      return `
+        <div class="screen-app">
+          <div class="header-bar">
+            <button class="menu-btn back-home"><i class="fa-solid fa-chevron-left"></i></button>
+            <div class="header-title text-orange-600 font-serif tracking-wider">Instagram</div>
+            <div class="w-10"></div>
+          </div>
+          <div class="app-panel space-y-4">
+            <div class="story-strip">
+              ${Object.values(CHARACTERS).map(c => `
+                <div class="flex flex-col items-center gap-1 cursor-pointer story-trigger" data-char="${c.name}">
+                  <div class="story-avatar"><div class="story-avatar-inner"><img src="${c.avatar}" alt="" /></div></div>
+                  <span class="text-[10px] text-slate-600">${c.name}</span>
+                </div>
+              `).join('')}
+            </div>
+
+            <div class="space-y-4">
+              ${posts.map(post => `
+                <div class="feed-post" data-postid="${post.id}">
+                  <div class="post-header">
+                    <div class="post-user">
+                      <img src="${post.avatar}" class="avatar-mini" />
+                      <div>
+                        <div class="text-xs font-bold text-slate-900">${post.accountName}</div>
+                        <div class="text-[10px] text-slate-500">${post.account}</div>
+                      </div>
+                    </div>
+                    <span class="text-[11px] text-slate-400">${post.time}</span>
+                  </div>
+                  <div class="post-image">
+                    <img src="${post.image}" alt="" />
+                  </div>
+                  <div class="post-actions">
+                    <div class="left">
+                      <button class="ig-like ${post.liked ? 'text-rose-500' : ''}" data-id="${post.id}"><i class="${post.liked ? 'fa-solid' : 'fa-regular'} fa-heart text-lg"></i></button>
+                      <button class="ig-comment-btn" data-id="${post.id}"><i class="fa-regular fa-comment text-lg"></i></button>
+                      <button><i class="fa-regular fa-paper-plane text-lg"></i></button>
+                    </div>
+                    <button class="ig-collect ${post.collected ? 'text-amber-500' : ''}" data-id="${post.id}"><i class="${post.collected ? 'fa-solid' : 'fa-regular'} fa-bookmark text-lg"></i></button>
+                  </div>
+                  <div class="px-3 pt-2 text-xs font-bold text-slate-800">${post.likes} 個喜歡</div>
+                  <div class="px-3 pt-1 text-xs text-slate-700"><span class="font-bold mr-1">${post.accountName}</span>${escapeHtml(post.caption)}</div>
+                  <div class="comment-box">
+                    <div class="text-[11px] text-slate-400 mt-1">查看全部 ${post.comments} 則留言</div>
+                    ${(post.commentsList || []).map(c => `
+                      <div class="comment flex items-start gap-2">
+                        <img src="${c.avatar}" class="w-5 h-5 rounded-full object-cover mt-0.5" />
+                        <div><span class="font-bold mr-1 text-slate-800">${c.user}</span><span class="text-slate-600">${escapeHtml(c.text)}</span></div>
+                      </div>
+                    `).join('')}
+                    <div class="mt-2 flex gap-2">
+                      <input class="ig-comment-input flex-1 rounded-xl border border-slate-200 px-3 py-1.5 text-[11px]" placeholder="新增留言..." data-id="${post.id}" />
+                      <button class="ig-comment-submit rounded-xl bg-orange-500 text-white px-3 py-1.5 text-[11px] font-bold" data-id="${post.id}">發布</button>
+                    </div>
+                  </div>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderThreadsApp() {
+      const posts = state.threadsPosts || [];
+      return `
+        <div class="screen-app">
+          <div class="header-bar">
+            <button class="menu-btn back-home"><i class="fa-solid fa-chevron-left"></i></button>
+            <div class="header-title font-black">Threads</div>
+            <div class="w-10"></div>
+          </div>
+          <div class="app-panel space-y-3">
+            <div class="card space-y-2 bg-white">
+              <textarea id="th-content" class="w-full rounded-xl border border-slate-200 p-3 text-xs focus:outline-none" rows="3" placeholder="分享新鮮事或碎碎念..."></textarea>
+              <div class="flex justify-end">
+                <button id="th-post-btn" class="rounded-xl bg-black text-white px-4 py-2 text-xs font-bold">發布串文</button>
+              </div>
+            </div>
+
+            <div class="space-y-3">
+              ${posts.map(p => `
+                <div class="card bg-white space-y-2">
+                  <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                      <img src="${p.avatar}" class="w-8 h-8 rounded-full object-cover" />
+                      <div>
+                        <div class="text-xs font-bold text-slate-900">${p.accountName}</div>
+                        <div class="text-[10px] text-slate-500">${p.account}</div>
+                      </div>
+                    </div>
+                    <span class="text-[10px] text-slate-400">${p.time}</span>
+                  </div>
+                  <p class="text-xs text-slate-800 leading-relaxed">${escapeHtml(p.content)}</p>
+                  <div class="flex items-center gap-4 text-xs text-slate-500 pt-1">
+                    <button class="th-like ${p.liked ? 'text-rose-500 font-bold' : ''}" data-id="${p.id}"><i class="${p.liked ? 'fa-solid' : 'fa-regular'} fa-heart mr-1"></i>讚</button>
+                    <button><i class="fa-regular fa-comment mr-1"></i>回覆 (${(p.replies || []).length})</button>
+                    <button><i class="fa-solid fa-retweet mr-1"></i>轉發</button>
+                  </div>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderPhoneApp() {
+      const char = getSelectedCharacter();
+      return `
+        <div class="screen-app">
+          <div class="header-bar">
+            <button class="menu-btn back-home"><i class="fa-solid fa-chevron-left"></i></button>
+            <div class="header-title">電話</div>
+            <div class="w-10"></div>
+          </div>
+          <div class="app-panel flex flex-col items-center justify-between py-6">
+            <div class="text-center space-y-3">
+              <img src="${char.avatar}" class="w-24 h-24 rounded-full object-cover mx-auto shadow-md border-4 border-white" />
+              <div class="text-xl font-bold text-slate-900">${char.name}</div>
+              <div class="text-xs text-emerald-600 font-semibold animate-pulse">正在通話中 01:24</div>
+            </div>
+            <div class="w-full max-w-xs card bg-white/90 text-xs text-slate-700 leading-relaxed text-center">
+              「喂？寶貝，剛剛排練完第一時間就打給你了。今天有乖乖吃飯嗎？」
+            </div>
+            <div class="flex gap-6">
+              <button class="w-14 h-14 rounded-full bg-slate-200 text-slate-700 flex items-center justify-center text-lg"><i class="fa-solid fa-microphone-slash"></i></button>
+              <button class="w-14 h-14 rounded-full bg-rose-500 text-white flex items-center justify-center text-lg shadow-lg hover:bg-rose-600 back-home"><i class="fa-solid fa-phone-slash"></i></button>
+              <button class="w-14 h-14 rounded-full bg-slate-200 text-slate-700 flex items-center justify-center text-lg"><i class="fa-solid fa-volume-high"></i></button>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderContactsApp() {
+      return `
+        <div class="screen-app">
+          <div class="header-bar">
+            <button class="menu-btn back-home"><i class="fa-solid fa-chevron-left"></i></button>
+            <div class="header-title">聯絡人</div>
+            <div class="w-10"></div>
+          </div>
+          <div class="app-panel space-y-3">
+            ${Object.values(CHARACTERS).map(c => `
+              <div class="card bg-white flex items-center gap-3">
+                <img src="${c.avatar}" class="w-12 h-12 rounded-full object-cover" />
+                <div class="min-w-0 flex-1">
+                  <div class="font-bold text-sm text-slate-900">${c.name} ${c.id === state.selectedCharId ? '<span class="text-rose-500 text-xs font-normal">❤️ 秘密戀人</span>' : ''}</div>
+                  <div class="text-[11px] text-slate-500 truncate">${c.publicImage}</div>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      `;
+    }
+
+    function renderPhotosApp() {
+      const char = getSelectedCharacter();
+      return `
+        <div class="screen-app">
+          <div class="header-bar">
+            <button class="menu-btn back-home"><i class="fa-solid fa-chevron-left"></i></button>
+            <div class="header-title">相簿</div>
+            <div class="w-10"></div>
+          </div>
+          <div class="app-panel space-y-3">
+            <div class="grid grid-cols-2 gap-2">
+              <div class="rounded-2xl overflow-hidden shadow aspect-square bg-slate-100">
+                <img src="${char.wallpaper}" class="w-full h-full object-cover" />
+              </div>
+              <div class="rounded-2xl overflow-hidden shadow aspect-square bg-slate-100">
+                <img src="https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=600&q=80" class="w-full h-full object-cover" />
+              </div>
+              <div class="rounded-2xl overflow-hidden shadow aspect-square bg-slate-100">
+                <img src="https://images.unsplash.com/photo-1509114397022-ed747cca3f65?auto=format&fit=crop&w=600&q=80" class="w-full h-full object-cover" />
+              </div>
+              <div class="rounded-2xl overflow-hidden shadow aspect-square bg-slate-100">
+                <img src="https://images.unsplash.com/photo-1470225620780-dba8ba36b745?auto=format&fit=crop&w=600&q=80" class="w-full h-full object-cover" />
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderSettingsApp() {
+      const char = getSelectedCharacter();
+      return `
+        <div class="screen-app">
+          <div class="header-bar">
+            <button class="menu-btn back-home"><i class="fa-solid fa-chevron-left"></i></button>
+            <div class="header-title">設定</div>
+            <div class="w-10"></div>
+          </div>
+          <div class="app-panel space-y-4 text-xs">
+            <div class="card bg-white space-y-2">
+              <div class="font-bold text-slate-900">裝置與玩家資訊</div>
+              <div>玩家姓名：<span class="font-bold">${escapeHtml(state.playerName)}</span></div>
+              <div>秘密戀人：<span class="font-bold text-rose-500">${char.name}</span></div>
+              <div>解鎖密碼：<span class="font-bold font-mono">${char.code}</span></div>
+            </div>
+
+            <div class="card bg-white space-y-2">
+              <div class="font-bold text-slate-900">遊戲操作模式</div>
+              <div class="grid grid-cols-2 gap-2 pt-1">
+                <button class="mode-switch-btn rounded-xl py-2 font-bold ${state.deviceMode === 'phone' ? 'bg-rose-500 text-white' : 'bg-slate-100'}" data-mode="phone">手機模式</button>
+                <button class="mode-switch-btn rounded-xl py-2 font-bold ${state.deviceMode === 'desktop' ? 'bg-rose-500 text-white' : 'bg-slate-100'}" data-mode="desktop">電腦模式</button>
+              </div>
+            </div>
+
+            <div class="card bg-white space-y-2">
+              <div class="font-bold text-rose-600">危險區域</div>
+              <button id="reset-game-action" class="w-full rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-600 font-bold py-2.5">重新開始遊戲 (清除存檔)</button>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderClockApp() {
+      return `
+        <div class="screen-app">
+          <div class="header-bar">
+            <button class="menu-btn back-home"><i class="fa-solid fa-chevron-left"></i></button>
+            <div class="header-title">時鐘</div>
+            <div class="w-10"></div>
+          </div>
+          <div class="app-panel flex flex-col items-center justify-center text-center py-10 space-y-4">
+            <div class="text-6xl font-light text-slate-900">${formatTime()}</div>
+            <div class="text-sm text-slate-500">${parseDateText()}</div>
+            <div class="card bg-white w-full max-w-xs mt-6 text-xs text-slate-700">
+              <div class="flex justify-between items-center py-2 border-b border-slate-100">
+                <span>每日晨喚</span>
+                <span class="font-bold text-emerald-600">07:30</span>
+              </div>
+              <div class="flex justify-between items-center py-2">
+                <span>排練提醒</span>
+                <span class="font-bold text-emerald-600">14:00</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderCalendarApp() {
+      return `
+        <div class="screen-app">
+          <div class="header-bar">
+            <button class="menu-btn back-home"><i class="fa-solid fa-chevron-left"></i></button>
+            <div class="header-title">行事曆</div>
+            <div class="w-10"></div>
+          </div>
+          <div class="app-panel space-y-3">
+            ${state.calendar.map(evt => `
+              <div class="card bg-white space-y-1">
+                <div class="flex justify-between text-xs font-bold text-slate-900">
+                  <span>${evt.title}</span>
+                  <span class="text-rose-500">${evt.date} ${evt.time}</span>
+                </div>
+                <div class="text-[11px] text-slate-500">${evt.note}</div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      `;
+    }
+
+    function renderNotesApp() {
+      return `
+        <div class="screen-app">
+          <div class="header-bar">
+            <button class="menu-btn back-home"><i class="fa-solid fa-chevron-left"></i></button>
+            <div class="header-title">備忘錄</div>
+            <div class="w-10"></div>
+          </div>
+          <div class="app-panel space-y-3">
+            <div class="flex gap-2">
+              <input id="note-input" class="flex-1 rounded-2xl border border-slate-200 px-3 py-2 text-xs bg-white" placeholder="新增備忘錄..." />
+              <button id="note-add" class="rounded-2xl bg-amber-500 text-white px-4 py-2 text-xs font-bold">新增</button>
+            </div>
+            <div class="space-y-2">
+              ${state.notes.map((n, idx) => `
+                <div class="card bg-white text-xs text-slate-800 flex justify-between items-center">
+                  <span>${escapeHtml(n)}</span>
+                  <button class="note-del text-rose-500 text-[11px]" data-index="${idx}"><i class="fa-solid fa-trash"></i></button>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderCalculatorApp() {
+      return `
+        <div class="screen-app">
+          <div class="header-bar">
+            <button class="menu-btn back-home"><i class="fa-solid fa-chevron-left"></i></button>
+            <div class="header-title">計算機</div>
+            <div class="w-10"></div>
+          </div>
+          <div class="app-panel flex flex-col justify-end">
+            <div class="bg-slate-900 text-white rounded-2xl p-4 text-right text-3xl font-mono mb-4" id="calc-display">0</div>
+            <div class="grid grid-cols-4 gap-2">
+              ${['C','/','*','-','7','8','9','+','4','5','6','=','1','2','3','0'].map(k => `
+                <button class="calc-btn rounded-2xl bg-white border border-slate-200 py-4 font-bold text-slate-700 hover:bg-slate-50" data-key="${k}">${k}</button>
+              `).join('')}
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderSearchApp() {
+      return `
+        <div class="screen-app">
+          <div class="header-bar">
+            <button class="menu-btn back-home"><i class="fa-solid fa-chevron-left"></i></button>
+            <div class="header-title">搜尋</div>
+            <div class="w-10"></div>
+          </div>
+          <div class="app-panel space-y-3">
+            <input class="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-xs" placeholder="搜尋手機內的聊天或備忘錄..." />
+            <div class="text-xs text-slate-400 text-center py-6">輸入關鍵字即可快速尋找手機內的模擬資料。</div>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderBrowserApp() {
+      return `
+        <div class="screen-app">
+          <div class="header-bar">
+            <button class="menu-btn back-home"><i class="fa-solid fa-chevron-left"></i></button>
+            <div class="header-title">瀏覽器</div>
+            <div class="w-10"></div>
+          </div>
+          <div class="app-panel space-y-3">
+            <div class="bg-slate-100 rounded-xl px-3 py-2 text-xs text-slate-500 font-mono">https://unus.internal/news</div>
+            <div class="card bg-white space-y-2">
+              <div class="font-bold text-sm text-slate-900">UNUS 官方最新公告</div>
+              <div class="text-xs text-slate-600 leading-relaxed">感謝各位粉絲一直以來的支持，全新單曲與巡迴企劃正在緊鑼密鼓準備中！請鎖定官方社群動態。</div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderNotificationsApp() {
+      return `
+        <div class="screen-app">
+          <div class="header-bar">
+            <button class="menu-btn back-home"><i class="fa-solid fa-chevron-left"></i></button>
+            <div class="header-title">通知中心</div>
+            <button id="clear-notif" class="text-xs text-rose-500 font-bold">全部標為已讀</button>
+          </div>
+          <div class="app-panel space-y-2.5">
+            ${(state.notifications || []).map(n => `
+              <div class="notification-item ${n.read ? 'opacity-60' : 'bg-pink-50/50'}" data-id="${n.id}">
+                <div class="w-8 h-8 rounded-full bg-rose-500 text-white flex items-center justify-center text-xs shrink-0"><i class="fa-solid fa-bell"></i></div>
+                <div class="min-w-0 flex-1">
+                  <div class="flex justify-between items-center">
+                    <span class="font-bold text-xs text-slate-900">${n.title}</span>
+                    <span class="text-[10px] text-slate-400">${n.createdAt ? new Date(n.createdAt).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}) : ''}</span>
+                  </div>
+                  <div class="text-xs text-slate-600 mt-0.5">${escapeHtml(n.text)}</div>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      `;
+    }
+
+    function bindAppSpecificEvents() {
+      // LINE
+      document.getElementById('line-send')?.addEventListener('click', () => {
+        const input = document.getElementById('line-input');
+        const text = (input?.value || '').trim();
+        if (!text) return;
+        const char = getSelectedCharacter();
+        if (!state.lineChats[char.id]) state.lineChats[char.id] = [];
+        state.lineChats[char.id].push({ id: `msg-${Date.now()}`, sender: 'me', text, time: formatTime() });
+        saveState();
+        renderRoot();
+
+        setTimeout(() => {
+          const replies = [
+            `收到囉！看到你的訊息心情就變好了。`,
+            `真的嗎？那晚點碰面再細說 😉`,
+            `好啦，別太累，等會兒記得喝水喔。`,
+            `嗯...偷偷告訴你，我也正在想你。`
+          ];
+          const replyText = replies[Math.floor(Math.random() * replies.length)];
+          state.lineChats[char.id].push({ id: `msg-${Date.now()}`, sender: 'them', text: replyText, time: formatTime() });
+          addNotification({ title: `${char.name} 傳來新訊息`, text: replyText, app: 'line', type: 'chat' });
+          saveState();
+          if (state.currentApp === 'line') renderRoot();
+        }, 1200);
+      });
+
+      document.querySelectorAll('.quick-reply').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const input = document.getElementById('line-input');
+          if (input) input.value = btn.dataset.text;
+        });
+      });
+
+      // Instagram
+      document.querySelectorAll('.ig-like').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const id = btn.dataset.id;
+          const post = state.instagramPosts.find(p => p.id === id);
+          if (post) {
+            post.liked = !post.liked;
+            post.likes += post.liked ? 1 : -1;
+            saveState();
+            renderRoot();
+          }
+        });
+      });
+
+      document.querySelectorAll('.ig-collect').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const id = btn.dataset.id;
+          const post = state.instagramPosts.find(p => p.id === id);
+          if (post) {
+            post.collected = !post.collected;
+            saveState();
+            renderRoot();
+          }
+        });
+      });
+
+      document.querySelectorAll('.ig-comment-submit').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const id = btn.dataset.id;
+          const input = document.querySelector(`.ig-comment-input[data-id="${id}"]`);
+          const text = (input?.value || '').trim();
+          if (!text) return;
+          const post = state.instagramPosts.find(p => p.id === id);
+          if (post) {
+            if (!post.commentsList) post.commentsList = [];
+            post.commentsList.push({ id: `c-${Date.now()}`, user: state.playerName, text, avatar: avatarSVG.unus });
+            post.comments += 1;
+            saveState();
+            renderRoot();
+          }
+        });
+      });
+
+      // Threads
+      document.getElementById('th-post-btn')?.addEventListener('click', () => {
+        const textarea = document.getElementById('th-content');
+        const content = (textarea?.value || '').trim();
+        if (!content) return;
+        const char = getSelectedCharacter();
+        state.threadsPosts = [
+          {
+            id: `th-${Date.now()}`,
+            account: char.handle,
+            accountName: char.name,
+            avatar: char.avatar,
+            content,
+            time: '剛剛',
+            liked: false,
+            boosted: false,
+            replies: []
+          },
+          ...state.threadsPosts
+        ];
+        saveState();
+        renderRoot();
+      });
+
+      document.querySelectorAll('.th-like').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const id = btn.dataset.id;
+          const p = state.threadsPosts.find(item => item.id === id);
+          if (p) {
+            p.liked = !p.liked;
+            saveState();
+            renderRoot();
+          }
+        });
+      });
+
+      // Notes
+      document.getElementById('note-add')?.addEventListener('click', () => {
+        const input = document.getElementById('note-input');
+        const val = (input?.value || '').trim();
+        if (!val) return;
+        state.notes.unshift(val);
+        saveState();
+        renderRoot();
+      });
+
+      document.querySelectorAll('.note-del').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const idx = parseInt(btn.dataset.index, 10);
+          state.notes.splice(idx, 1);
+          saveState();
+          renderRoot();
+        });
+      });
+
+      // Notifications
+      document.getElementById('clear-notif')?.addEventListener('click', () => {
+        state.notifications = state.notifications.map(n => ({ ...n, read: true }));
+        state.unreadNotifications = 0;
+        saveState();
+        renderRoot();
+      });
+
+      // Settings
+      document.getElementById('reset-game-action')?.addEventListener('click', resetGame);
+      document.querySelectorAll('.mode-switch-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          state.deviceMode = btn.dataset.mode;
+          saveState();
+          renderRoot();
+        });
+      });
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      renderRoot();
+    });
+  </script>
+</body>
+</html>
